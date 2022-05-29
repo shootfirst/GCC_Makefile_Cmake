@@ -7,7 +7,7 @@ GCC Makefile Cmake 学习
   
     GNU编译器套装（英语：GNU Compiler Collection，缩写为GCC），指一套编程语言编译器，以GPL及LGPL许可证所发行的自由软件，也是GNU计划的关键部分，也是GNU工具链的主要组成部分之一。         GCC（特别是其中的C语言编译器）也常被认为是跨平台编译器的事实标准。1985年由理查德·马修·斯托曼开始发展，现在由自由软件基金会负责维护工作。
     
-    原名为GNU C语言编译器（GNU C Compiler），因为它原本只能处理C语言。GCC在发布后很快地得到扩展，变得可处理C++。之后也变得可处理Fortran、Pascal、Objective-C、Java、Ada，Go与其他语     言。
+    原名为GNU C语言编译器（GNU C Compiler），因为它原本只能处理C语言。GCC在发布后很快地得到扩展，变得可处理C++。之后也变得可处理Fortran、Pascal、Objective-C、Java、Ada，Go与其他     语言。
 
     许多操作系统，包括许多类Unix系统，如Linux及BSD家族都采用GCC作为标准编译器。
 
@@ -15,9 +15,9 @@ GCC Makefile Cmake 学习
     
   + GCC组件
     
-  + 如何编写GCC命令
-
-    gcc与g++区别：对于 C 语言或者 C++ 程序，可以通过执行 gcc 或者 g++ 指令来调用 GCC 编译器。
+  + gcc与g++区别：
+    
+    对于 C 语言或者 C++ 程序，可以通过执行 gcc 或者 g++ 指令来调用 GCC 编译器。
     
     我们更习惯使用 gcc 指令编译 C 语言程序，用 g++ 指令编译 C++ 代码。需要强调的一点是，这并不是 gcc 和 g++ 的区别，gcc 指令也可以用来编译 C++ 程序，同样 g++ 指令也可以用于编译 C     语言程序。
     
@@ -28,6 +28,46 @@ GCC Makefile Cmake 学习
     但如果使用 g++ 指令，则无论目标文件的后缀名是什么，该指令都一律按照编译 C++ 代码的方式编译该文件。也就是说，对于 .c 文件来说，gcc 指令以 C 语言代码对待，而 g++ 指令会以 C++ 代     码对待。但对于 .cpp 文件来说，gcc 和 g++ 都会以 C++ 代码的方式编译。
     
     如果想使用 gcc 指令来编译执行 C++ 程序，需要在使用 gcc 指令时，手动为其添加 -lstdc++ -shared-libgcc 选项，表示 gcc 在编译 C++ 程序时可以链接必要的 C++ 标准库。
+    
+    
+  + 如何编写GCC命令
+
+    gcc -x file (-o target)
+    
+    gcc 常用选项：
+    
+    - E 预处理
+
+    - S 编译不汇编
+
+    - c 汇编
+    
+    - o 指定生成的文件名
+
+    - std = 编译标准 
+
+
+## makefile
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
   
   
   
