@@ -52,6 +52,8 @@ GCC Makefile Cmake 学习
 ## makefile
 
 
+
+
     + 示例：
     
     all: main.o foo.o
@@ -69,12 +71,17 @@ GCC Makefile Cmake 学习
      lean:
 	      @rm simple $(baga1).o $(baga2).o
         
+	
+	
+	
+	
       
     + 规则：
       target ... : prerequisites ...
         command（前面有tab键）
       
       反斜杠（ \ ）是换行符的意思。这样比较便于makefile的阅读。
+      
       
       
       
@@ -92,7 +99,12 @@ GCC Makefile Cmake 学习
       - 当然，你的C文件和H文件是存在的啦，于是make会生成 .o 文件，然后再用 .o 文件生成make的终极任务，也就是执行文件第一个目标文件了。
       
         
+	
+	
     + 构建目标：GNU Make版本3.81引入了一个名为.DEFAULT_GOAL的特殊变量，可用于告知如果在命令行中未指定目标，应该构建哪个目标（或目标）。
+    
+    
+    
     
     
     + 自动推导：只要make看到一个 .o 文件，它就会自动的把 .c 文件加在依赖关系中，如果make找到一个 whatever.o ，那么 whatever.c 就会是 whatever.o 的依赖文件。并且 cc -c  
@@ -110,12 +122,21 @@ GCC Makefile Cmake 学习
     
       和示例完全相同。
       
+      
+      
+      
     + makefile内容：
       Makefile里主要包含了五个东西：显式规则、隐晦规则、变量定义、文件指示和注释，文件指示。其包括了三个部分，一个是在一个Makefile中引用另一个Makefile，就像C语言中的include一样         include <filename>；另一个是指根据某些情况指定Makefile中的有效部分，就像C语言中的预编译#if一样；还有就是定义一个多行的命令。
+      
+      
+      
       
     + makefile环境变量：
       
       执行时，如 make BOARD = qemu ，则在makefile文件中可以使用变量BOARD，它的值是qemu
+      
+      
+      
       
     + makefile工作方式：
       
@@ -135,6 +156,7 @@ GCC Makefile Cmake 学习
       
       
       
+      
     + 伪目标：
       伪目标是这样一个目标：它不代表一个真正的文件名，在执行make时可以指定这个目标来执行其所在规则定义的命令，有时也可以将一个伪目标称为一个标签。使用伪目标有两点要求： 
         - 避免在我们的Makefile中定义的只执行命令的目标和工作目录下的实际文件出现名字冲突。 
@@ -149,6 +171,11 @@ GCC Makefile Cmake 学习
        - 在Makefile中，一个伪目标可以有自己的依赖。在一个目录下如果需要创建多个可执行程序，我们可以将所有程序的重建规则在一个Makefile中描述。因为Makefile中第一个目标是“终极目
          标”，约定的做法是使用过一个称为“all”的伪目标来作为终极目标，它的依赖文件就是那些需要创建的程序。
 
+    + 多目标：
+      Makefile的规则中的目标可以不止一个，其支持多目标，有可能我们的多个目标同时依赖于一个文件，并且其生成的命令大体类似。于是我们就能把其合并起来
+      bigoutput littleoutput : text.g
+    	generate text.g -$(subst output,,$@) > $@
+       
        
     + 命令书写：
       - 
@@ -162,15 +189,28 @@ GCC Makefile Cmake 学习
       - $(error text...)       错误控制
       
       
+      
+      
     + 变量：
       =  会递归定义
       := 则不会
       ?= 没定义过则定义之
+      += 追加变量值
       
       定义：变量名=变量值
       引用：$(变量名) ${变量名)
       
-      - 高级用法：
+      - 高级用法
+      	+ 替换变量共有部分：$(var:%.c=%.o)
+	+ 把变量值当成变量
+
+      - 多行变量：使用define关键字。使用define关键字设置变量的值可以有换行，这有利于定义一系列的命令 
+        define a 
+	echo a 
+	echo aa 
+	endef
+	
+      	
       	
 	
       
@@ -220,77 +260,54 @@ GCC Makefile Cmake 学习
         MAKE：指make命令名是什么。当我们需要在 Makefile 中调用另一个 Makefile 时需要用到这个变量， 采用这种方式，有利于写一个容易移植的 Makefile。
         MAKECMDGOALS： 指的是用户输入的目标。
         
+  + 文件搜寻：
+      如果没有指明VPATH，make只会在当前的目录中去找寻依赖文件和目标文件。如果定义了这个变量，那么，make就会在当前目录找不到的情况下，到所指定的目录中去找寻文件了。
+      VPATH = src:../headers
+  
         
         
-        
-    - 模式匹配
-        baga1 = main
-        baga2 = foo
+  +模式匹配
+      baga1 = main
+      baga2 = foo
 
-        simple: main.o foo.o
-	      $(info good)
-	        @gcc -o $@ $^
+      simple: main.o foo.o
+	    $(info good)
+	    @gcc -o $@ $^
 
 	
-        %.o:%.c
-	        @gcc -o $@ -c $^
+      %.o:%.c
+	    @gcc -o $@ -c $^
 
-        .PHONY: clean
-        clean:
-	        @rm simple $(baga1).o $(baga2).o
+      .PHONY: clean
+      clean:
+	    @rm simple $(baga1).o $(baga2).o
+	
+	
 		
 		
-		
-    - 函数
+  + 函数
     	
-	+ 语法：$(<function> <arguments>)
-	
-	+ addprefix 函数：是用来在给字符串中的每个子串前加上一个前缀，其形式是：$(addprefix prefix, names...)
-	
-	+ filter 函数：用于从一个字符串中，根据模式得到满足模式的字符串，其形式是：$(filter pattern..., text)
-	
-	+ patsubst 函数：是用来进行字符串替换的，其形式是：$(patsubst pattern, replacement, text)
-	
-	+ wildcard 函数：通过它可以得到我们所需的文件，这个函数如果我们在 Windows 或是Linux 命令行中的“*”。 其形式是：$(wildcard pattern)
-    
-    
-    - 条件判断
-      不加else也可
-    	<conditional-directive>
-	<text-if-true>
-	else
-	<text-if-false>
-	endif
-    	
-	+ ifeq ifneq ifdef ifndef
-	
-	  
-    
-
+      - 语法：$(<function> <arguments>)
       
-  
+      - addprefix 函数：是用来在给字符串中的每个子串前加上一个前缀，其形式是：$(addprefix prefix, names...)
+      
+      - filter 函数：用于从一个字符串中，根据模式得到满足模式的字符串，其形式是：$(filter pattern..., text)
+      
+      - patsubst 函数：是用来进行字符串替换的，其形式是：$(patsubst pattern, replacement, text)
+      
+      - wildcard 函数：通过它可以得到我们所需的文件，这个函数如果我们在 Windows 或是Linux 命令行中的“*”。 其形式是：$(wildcard pattern)
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-  
-  
-  
-  
-  
-  
+	
+	
+  + 条件判断
+	
+    不加else也可
+    <conditional-directive>
+    <text-if-true>
+    else
+    <text-if-false>
+    endif
+    	
+    - ifeq ifneq ifdef ifndef
+	
