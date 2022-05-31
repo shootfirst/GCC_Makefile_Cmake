@@ -150,19 +150,29 @@ GCC Makefile Cmake 学习
          标”，约定的做法是使用过一个称为“all”的伪目标来作为终极目标，它的依赖文件就是那些需要创建的程序。
 
        
-       
+    + 命令书写：
+      - 
 
       
 
     + 显示信息：
+      - @echo 正在编译XXX模块...... 向屏幕输出信息
       - $(info text...)        显示信息
       - $(warning text...)     警告控制
       - $(error text...)       错误控制
       
       
     + 变量：
+      =  会递归定义
+      := 则不会
+      ?= 没定义过则定义之
+      
       定义：变量名=变量值
       引用：$(变量名) ${变量名)
+      
+      - 高级用法：
+      	
+	
       
       - 自动化变量：所谓自动化变量，就是这种变量会把模式中所定义的一系列的文件自动地挨个取出，直至所有的符合模式的文件都取完了。这种自动化变量只应出现在规则的命令中。
         
@@ -228,6 +238,33 @@ GCC Makefile Cmake 学习
         .PHONY: clean
         clean:
 	        @rm simple $(baga1).o $(baga2).o
+		
+		
+		
+    - 函数
+    	
+	+ 语法：$(<function> <arguments>)
+	
+	+ addprefix 函数：是用来在给字符串中的每个子串前加上一个前缀，其形式是：$(addprefix prefix, names...)
+	
+	+ filter 函数：用于从一个字符串中，根据模式得到满足模式的字符串，其形式是：$(filter pattern..., text)
+	
+	+ patsubst 函数：是用来进行字符串替换的，其形式是：$(patsubst pattern, replacement, text)
+	
+	+ wildcard 函数：通过它可以得到我们所需的文件，这个函数如果我们在 Windows 或是Linux 命令行中的“*”。 其形式是：$(wildcard pattern)
+    
+    
+    - 条件判断
+      不加else也可
+    	<conditional-directive>
+	<text-if-true>
+	else
+	<text-if-false>
+	endif
+    	
+	+ ifeq ifneq ifdef ifndef
+	
+	  
     
 
       
