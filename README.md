@@ -54,7 +54,7 @@ GCC Makefile Cmake 学习
 
 
 
-    + 示例：
+  + 示例：
     
     all: main.o foo.o
 	    $(info good)
@@ -76,7 +76,7 @@ GCC Makefile Cmake 学习
 	
 	
       
-    + 规则：
+  + 规则：
       target ... : prerequisites ...
         command（前面有tab键）
       
@@ -85,7 +85,7 @@ GCC Makefile Cmake 学习
       
       
       
-    + make执行过程：
+  + make执行过程：
       在默认的方式下，也就是我们只输入 make 命令。那么，
 
       - make会在当前目录下找名字叫“Makefile”或“makefile”的文件。
@@ -101,13 +101,13 @@ GCC Makefile Cmake 学习
         
 	
 	
-    + 构建目标：GNU Make版本3.81引入了一个名为.DEFAULT_GOAL的特殊变量，可用于告知如果在命令行中未指定目标，应该构建哪个目标（或目标）。
+  + 构建目标：GNU Make版本3.81引入了一个名为.DEFAULT_GOAL的特殊变量，可用于告知如果在命令行中未指定目标，应该构建哪个目标（或目标）。
     
     
     
     
     
-    + 自动推导：只要make看到一个 .o 文件，它就会自动的把 .c 文件加在依赖关系中，如果make找到一个 whatever.o ，那么 whatever.c 就会是 whatever.o 的依赖文件。并且 cc -c  
+  + 自动推导：只要make看到一个 .o 文件，它就会自动的把 .c 文件加在依赖关系中，如果make找到一个 whatever.o ，那么 whatever.c 就会是 whatever.o 的依赖文件。并且 cc -c  
       whatever.c 也会被推导出来：如下：
       
       
@@ -125,20 +125,20 @@ GCC Makefile Cmake 学习
       
       
       
-    + makefile内容：
+  + makefile内容：
       Makefile里主要包含了五个东西：显式规则、隐晦规则、变量定义、文件指示和注释，文件指示。其包括了三个部分，一个是在一个Makefile中引用另一个Makefile，就像C语言中的include一样         include <filename>；另一个是指根据某些情况指定Makefile中的有效部分，就像C语言中的预编译#if一样；还有就是定义一个多行的命令。
       
       
       
       
-    + makefile环境变量：
+  + makefile环境变量：
       
       执行时，如 make BOARD = qemu ，则在makefile文件中可以使用变量BOARD，它的值是qemu
       
       
       
       
-    + makefile工作方式：
+  + makefile工作方式：
       
       - 读入所有的Makefile。
 
@@ -157,7 +157,7 @@ GCC Makefile Cmake 学习
       
       
       
-    + 伪目标：
+  + 伪目标：
       伪目标是这样一个目标：它不代表一个真正的文件名，在执行make时可以指定这个目标来执行其所在规则定义的命令，有时也可以将一个伪目标称为一个标签。使用伪目标有两点要求： 
         - 避免在我们的Makefile中定义的只执行命令的目标和工作目录下的实际文件出现名字冲突。 
         - 提高执行make时的效率，特别是对一个大型的工程来说，编译的效率也许你同样关心。
@@ -171,20 +171,20 @@ GCC Makefile Cmake 学习
        - 在Makefile中，一个伪目标可以有自己的依赖。在一个目录下如果需要创建多个可执行程序，我们可以将所有程序的重建规则在一个Makefile中描述。因为Makefile中第一个目标是“终极目
          标”，约定的做法是使用过一个称为“all”的伪目标来作为终极目标，它的依赖文件就是那些需要创建的程序。
 
-    + 多目标：
+  + 多目标：
       Makefile的规则中的目标可以不止一个，其支持多目标，有可能我们的多个目标同时依赖于一个文件，并且其生成的命令大体类似。于是我们就能把其合并起来
       bigoutput littleoutput : text.g
     	generate text.g -$(subst output,,$@) > $@
        
        
-    + 命令执行：
+  + 命令执行：
       当依赖目标新于目标时，也就是当规则的目标需要被更新时，make会一条一条的执行其后的命令。需要注意的是，如果你要让上一条命令的结果应用在下一条命令时，你应该使用分号分隔这两条命
       令。比如你的第一条命令是cd命令，你希望第二条命令得在cd之后的基础上运行，那么你就不能把这两条命令写在两行上，而应该把这两条命令写在一行上，用分号分隔。
     
-    + 命令出错：
+  + 命令出错：
       为了做到这一点，忽略命令的出错，我们可以在Makefile的命令行前加一个减号 - （在Tab键之后），标记为不管命令出不出错都认为是成功的。
       
-    + make的嵌套执行：
+  + make的嵌套执行：
       例如，我们有一个子目录叫subdir，这个目录下有个Makefile文件，来指明了这个目录下文件的编译规则。那么我们总控的Makefile可以这样书写：
       subsystem:
     	cd subdir && $(MAKE)
@@ -193,7 +193,7 @@ GCC Makefile Cmake 学习
 
       
 
-    + 显示信息：
+  + 显示信息：
       - @echo 正在编译XXX模块...... 向屏幕输出信息
       - $(info text...)        显示信息
       - $(warning text...)     警告控制
@@ -202,7 +202,7 @@ GCC Makefile Cmake 学习
       
       
       
-    + 变量：
+  + 变量：
       =  会递归定义
       := 则不会
       ?= 没定义过则定义之
