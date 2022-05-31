@@ -1,6 +1,8 @@
 # GCC_Makefile_Cmake
 GCC Makefile Cmake 学习
 
+参考：https://blog.csdn.net/Linux_LR/article/details/78597334      https://seisman.github.io/how-to-write-makefile/introduction.html
+
 ## GCC
 
   + GCC是什么：
@@ -48,18 +50,115 @@ GCC Makefile Cmake 学习
 
 
 ## makefile
+
+
+    + 示例：
+    
+    all: main.o foo.o
+	    $(info good)
+	      @gcc -o simple $(baga1).o $(baga2).o
+    baga1 = main
+    baga2 = foo
+	
+    $(baga1).o: $(baga1).c
+	      @gcc -o $(baga1).o -c $(baga1).c
+
+    $(baga2).o: $(baga2).c
+	      @gcc -o $(baga2).o -c $(baga2).c
+
+     lean:
+	      @rm simple $(baga1).o $(baga2).o
+        
+      
     + 规则：
       target ... : prerequisites ...
         command（前面有tab键）
+      
+      反斜杠（ \ ）是换行符的意思。这样比较便于makefile的阅读。
+      
+      
+      
+    + make执行过程：
+      在默认的方式下，也就是我们只输入 make 命令。那么，
+
+      - make会在当前目录下找名字叫“Makefile”或“makefile”的文件。
+
+      - 如果找到，它会找文件中的第一个目标文件（target），并把这个文件作为最终的目标文件。
+
+      - 如果第一个目标文件不存在，或是所依赖的后面的 .o 文件的文件修改时间要比第一目标文件文件新，那么，它就会执行后面所定义的命令来生成第一目标文件。
+
+      - 如果所依赖的 .o 文件也不存在，那么make会在当前文件中找目标为 .o 文件的依赖性，如果找到则再根据那一个规则生成 .o 文件。（这有点像一个堆栈的过程）
+
+      - 当然，你的C文件和H文件是存在的啦，于是make会生成 .o 文件，然后再用 .o 文件生成make的终极任务，也就是执行文件第一个目标文件了。
+      
         
-    + 构建目标：GNU Make版本3.81引入了一个名为.DEFAULT_GOAL的特殊变量，可用于告知如果在命令行中未指定目标，应该构建哪个目标（或目标）。否则，Make会简单地使它遇到的第一个目标。
+    + 构建目标：GNU Make版本3.81引入了一个名为.DEFAULT_GOAL的特殊变量，可用于告知如果在命令行中未指定目标，应该构建哪个目标（或目标）。
     
+    
+    + 自动推导：只要make看到一个 .o 文件，它就会自动的把 .c 文件加在依赖关系中，如果make找到一个 whatever.o ，那么 whatever.c 就会是 whatever.o 的依赖文件。并且 cc -c  
+      whatever.c 也会被推导出来：如下：
+      
+      
+      baga1 = main
+      baga2 = foo
+      simple: main.o foo.o
+	    $(info good)
+	      @gcc -o simple $(baga1).o $(baga2).o
+      
+      clean:
+	      @rm simple $(baga1).o $(baga2).o
+    
+      和示例完全相同。
+      
+    + makefile内容：
+      Makefile里主要包含了五个东西：显式规则、隐晦规则、变量定义、文件指示和注释，文件指示。其包括了三个部分，一个是在一个Makefile中引用另一个Makefile，就像C语言中的include一样         include <filename>；另一个是指根据某些情况指定Makefile中的有效部分，就像C语言中的预编译#if一样；还有就是定义一个多行的命令。
+      
+    + makefile环境变量：
+      
+      执行时，如 make BOARD = qemu ，则在makefile文件中可以使用变量BOARD，它的值是qemu
+      
+    + makefile工作方式：
+      
+      - 读入所有的Makefile。
+
+      - 读入被include的其它Makefile。
+
+      - 初始化文件中的变量。
+
+      - 推导隐晦规则，并分析所有规则。
+
+      - 为所有的目标文件创建依赖关系链。
+
+      - 根据依赖关系，决定哪些目标要重新生成。
+
+      - 执行生成命令。
+      
+      
+      
+    + 伪目标：
+      伪目标是这样一个目标：它不代表一个真正的文件名，在执行make时可以指定这个目标来执行其所在规则定义的命令，有时也可以将一个伪目标称为一个标签。使用伪目标有两点要求： 
+        - 避免在我们的Makefile中定义的只执行命令的目标和工作目录下的实际文件出现名字冲突。 
+        - 提高执行make时的效率，特别是对一个大型的工程来说，编译的效率也许你同样关心。
+        
+       使用场合：
+       
+       - 规则中“rm”不是创建文件“clean”的命令，而是删除当前目录下的所有.o 文件和temp文件。当工作目录下不存在“clean”这个文件时，我们输入“make clean”就可以完成上述的删除工作。但是
+         如果在当前工作目录下存在“clean”这个文件就不一样了，同样我们输入“make clean”，由于这个规则没有任何依赖文件，所以目标被认为是最新的而不去执行规则所定义的命令，因此“rm”将不
+         会被执行。为解决这个问题，我们将目标“clean”声明为伪目标。
+         
+       - 在Makefile中，一个伪目标可以有自己的依赖。在一个目录下如果需要创建多个可执行程序，我们可以将所有程序的重建规则在一个Makefile中描述。因为Makefile中第一个目标是“终极目
+         标”，约定的做法是使用过一个称为“all”的伪目标来作为终极目标，它的依赖文件就是那些需要创建的程序。
+
+       
+       
+
       
 
     + 显示信息：
       - $(info text...)        显示信息
       - $(warning text...)     警告控制
       - $(error text...)       错误控制
+      
       
     + 变量：
       定义：变量名=变量值
@@ -72,6 +171,27 @@ GCC Makefile Cmake 学习
         + $^：则表示的是规则中的所有先择条件。
         
         + $<：表示的是规则中的第一个先决条件。
+        
+        和示例完全相同：
+        
+        
+        all: main.o foo.o
+	        @gcc -o $@ $^
+        baga1 = main
+        baga2 = foo
+	
+        $(baga1).o: $(baga1).c
+	        @gcc -o $@ -c $^
+
+        $(baga2).o: $(baga2).c
+	        @gcc -o $@ -c $^
+
+        .PHONY: clean
+        clean:
+	        @rm simple $(baga1).o $(baga2).o
+          
+          
+          
         
       - 特殊变量：make程序定义好的变量
         
@@ -89,6 +209,26 @@ GCC Makefile Cmake 学习
          
         MAKE：指make命令名是什么。当我们需要在 Makefile 中调用另一个 Makefile 时需要用到这个变量， 采用这种方式，有利于写一个容易移植的 Makefile。
         MAKECMDGOALS： 指的是用户输入的目标。
+        
+        
+        
+        
+    - 模式匹配
+        baga1 = main
+        baga2 = foo
+
+        simple: main.o foo.o
+	      $(info good)
+	        @gcc -o $@ $^
+
+	
+        %.o:%.c
+	        @gcc -o $@ -c $^
+
+        .PHONY: clean
+        clean:
+	        @rm simple $(baga1).o $(baga2).o
+    
 
       
   
